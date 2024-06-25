@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.8)
-project(my_opencv_demo)
+project(arcanain_imageprocessing_tutorial)
+
+#list(APPEND CMAKE_PREFIX_PATH "$ENV{AMENT_PREFIX_PATH}")
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
@@ -27,17 +29,16 @@ if(BUILD_TESTING)
 endif()
 
 
-add_executable(minimal_opencv_ros2_node src/minimal_opencv_ros2_node.cpp)
-ament_target_dependencies(minimal_opencv_ros2_node rclcpp std_msgs sensor_msgs cv_bridge image_transport OpenCV)
+add_executable(random_image_publisher src/generate_random_image_pub.cpp)
+ament_target_dependencies(random_image_publisher rclcpp std_msgs sensor_msgs cv_bridge image_transport OpenCV)
 
-add_executable(minimal_opencv_ros2_subscriber src/image_sub_view.cpp)
-ament_target_dependencies(minimal_opencv_ros2_subscriber rclcpp cv_bridge image_transport sensor_msgs OpenCV)
+add_executable(image_subscriber src/image_sub_view.cpp)
+ament_target_dependencies(image_subscriber rclcpp cv_bridge image_transport sensor_msgs OpenCV)
 
 install(TARGETS
-  minimal_opencv_ros2_node
-  minimal_opencv_ros2_subscriber
+  random_image_publisher
+  image_subscriber
   DESTINATION lib/${PROJECT_NAME}
 )
-
 
 ament_package()
