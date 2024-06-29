@@ -8,13 +8,13 @@
 
 using namespace std::chrono_literals;
 
-class MinimalImagePublisher : public rclcpp::Node {
+class RandomImagePublisher : public rclcpp::Node {
 public:
-  MinimalImagePublisher() : Node("opencv_image_publisher"), count_(0) {
+  RandomImagePublisher() : Node("opencv_image_publisher"), count_(0) {
     publisher_ =
-        this->create_publisher<sensor_msgs::msg::Image>("random_image", 10);
+        this->create_publisher<sensor_msgs::msg::Image>("/image_raw", 10);
     timer_ = this->create_wall_timer(
-        500ms, std::bind(&MinimalImagePublisher::timer_callback, this));
+        500ms, std::bind(&RandomImagePublisher::timer_callback, this));
   }
 
 private:
@@ -58,7 +58,7 @@ private:
 int main(int argc, char *argv[]) {
   rclcpp::init(argc, argv);
   // create a ros2 node
-  auto node = std::make_shared<MinimalImagePublisher>();
+  auto node = std::make_shared<RandomImagePublisher>();
 
   // process ros2 callbacks until receiving a SIGINT (ctrl-c)
   rclcpp::spin(node);

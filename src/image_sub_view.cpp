@@ -11,7 +11,7 @@ public:
   {
     // Initialize subscriber
     subscriber_ = this->create_subscription<sensor_msgs::msg::Image>(
-      "random_image", 10, std::bind(&MinimalImageSubscriber::image_callback, this, std::placeholders::_1));
+      "/image_raw_transformed", 10, std::bind(&MinimalImageSubscriber::image_callback, this, std::placeholders::_1));
   }
 
 private:
