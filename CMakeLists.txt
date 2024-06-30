@@ -41,12 +41,23 @@ ament_target_dependencies(image_resize_sub_pub rclcpp cv_bridge image_transport 
 add_executable(image_grayscale_sub_pub src/image_grayscale_sub_pub.cpp)
 ament_target_dependencies(image_grayscale_sub_pub rclcpp cv_bridge image_transport sensor_msgs OpenCV)
 
+add_executable(image_adjust_brightness_pub_sub src/image_adjust_brightness_pub_sub.cpp)
+ament_target_dependencies(image_adjust_brightness_pub_sub rclcpp cv_bridge image_transport sensor_msgs OpenCV)
+
+add_executable(image_adjust_contrast_pub_sub src/image_adjust_contrast_pub_sub.cpp)
+ament_target_dependencies(image_adjust_contrast_pub_sub rclcpp cv_bridge image_transport sensor_msgs OpenCV)
+
+add_executable(image_rotate_pub_sub src/image_rotate_pub_sub.cpp)
+ament_target_dependencies(image_rotate_pub_sub rclcpp cv_bridge image_transport sensor_msgs OpenCV)
+
 install(TARGETS
   random_image_publisher
   image_subscriber
   image_resize_sub_pub
   image_grayscale_sub_pub
-  
+  image_adjust_brightness_pub_sub
+  image_adjust_contrast_pub_sub
+  image_rotate_pub_sub
   DESTINATION lib/${PROJECT_NAME}
 )
 
