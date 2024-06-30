@@ -3,14 +3,18 @@
 #include <cv_bridge/cv_bridge.h>
 #include <opencv2/opencv.hpp>
 #include <opencv2/imgproc/imgproc.hpp>
+#include <eigen3/Eigen/Dense>
 
-class ImageGrayScaleConverter : public rclcpp::Node
+class ImageResizer : public rclcpp::Node
 {
 public:
-  ImageGrayScaleConverter() : Node("image_grayscale_sub_pub")
+  ImageResizer() : Node("image_resize_pub_sub")
   {
+    this->declare_parameter<int>("width", 0);  // Default width
+    this->declare_parameter<int>("height", 0); // Default height
+
     subscriber_ = this->create_subscription<sensor_msgs::msg::Image>(
-      "/image_raw", 10, std::bind(&ImageGrayScaleConverter::image_callback, this, std::placeholders::_1));
+      "/image_raw", 10, std::bind(&ImageResizer::image_callback, this, std::placeholders::_1));
       
     publisher_ = this->create_publisher<sensor_msgs::msg::Image>(
         "/image_raw_transformed", 10);
@@ -31,16 +35,24 @@ private:
     }
 
     cv::Mat &cv_image = cv_ptr->image;
-    // OpenCVを使用した画像処理を行う
-    // 例: 画像をグレースケールに変換
-    cv::Mat gray_image;
-    cv::cvtColor(cv_image, gray_image, cv::COLOR_BGR2GRAY);
+
+    int new_width, new_height;
+    this->get_parameter("width", new_width);
+    this->get_parameter("height", new_height);
+
+    // 画像のリサイズ処理
+    cv::Mat resized_image;
+    if (new_width > 0 && new_height > 0) {
+        cv::resize(cv_image, resized_image, cv::Size(new_width, new_height));
+    } else {
+        resized_image = cv_image;  // パラメータが設定されていない場合は元のサイズを保持
+    }
+
 
     // 処理した画像をパブリッシュ（オプション）
+    // 処理した画像をパブリッシュ（オプション）
     sensor_msgs::msg::Image ros_image;
-    cv_ptr->image = gray_image;
-    cv_ptr->encoding = "mono8";
-    cv_ptr->toImageMsg(ros_image);
+    cv_bridge::CvImage(cv_ptr->header, "bgr8", resized_image).toImageMsg(ros_image);
     publisher_->publish(ros_image);
   }
 
@@ -51,7 +63,7 @@ private:
 int main(int argc, char **argv)
 {
   rclcpp::init(argc, argv);
-  rclcpp::spin(std::make_shared<ImageGrayScaleConverter>());
+  rclcpp::spin(std::make_shared<ImageResizer>());
   rclcpp::shutdown();
   return 0;
 }
